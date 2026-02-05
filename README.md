@@ -25,10 +25,13 @@ The **Optimized Average Weighted Acceleration (OAWA)** algorithm is the mathemat
 
 1.  **Keypoint Weighting ($w_i$):**
     We assign weights based on a binomial-derived linear distribution, heavily favoring fingertips ($i \in \{4,8,12,16,20\}$) where kinetic energy is highest during gestures.
-    $$w_i = \begin{cases} 6 & \text{if } i \in \{ \text{fingertips} \} \\ 1 & \text{otherwise} \end{cases}$$
+
+    where $w_i = 6$ for fingertip keypoints ($i \in \{4,8,12,16,20\}$), and $w_i = 1$ otherwise.
+
 
 2.  **Weighted Velocity Profiling ($V_{avg}$):**
     We compute the weighted sum of velocities across all keypoints to create a global motion profile.
+
     $$V_{\text{avg, axis}}(t) = \sum_{i=0}^{20} v_{i,\text{axis}}(t) \cdot w_i$$
 
 3.  **Acceleration Profiling (OAWA Output):**
@@ -36,6 +39,19 @@ The **Optimized Average Weighted Acceleration (OAWA)** algorithm is the mathemat
     $$A_{\text{avg, axis}}(t) = \sum_{i=0}^{20} \left( \frac{v_{i,\text{axis}}(t) - v_{i,\text{axis}}(t_{\text{prev}})}{t - t_{\text{prev}}} \right) \cdot w_i$$
 
 This approach allowed us to virtually "understand" every permutation of a gesture (e.g., a swipe performed by one finger vs. whole hand) using a very small training set.
+
+### Results: Clustering Efficiency
+The effectiveness of the OAWA weighting strategy is visually demonstrable when analyzing feature clustering. By assigning higher weights to high-energy keypoints (fingertips), we significantly reduce noise and improve the separability of gesture classes.
+
+**1. Raw Average Velocity (Unweighted)**
+In the unweighted scatter plot, gesture classes overlap significantly, making it difficult for the model to draw clear decision boundaries. The data appears noisy and less distinct.
+
+![Average Velocity Scatter Plot](https://github.com/LinukPerera/Neural-Network-Driven-Augmented-Reality-for-Gesture-Control/blob/main/Project-Results/Average%20Velocity%20Scatter%20Plot.png)
+
+**2. Weighted Average Velocity (OAWA Applied)**
+After applying the OAWA weighting scheme, the features for each class become tightly clustered and distinct. The "Swipes" and "Static" gestures separate clearly, proving that the algorithm successfully amplifies the signal (intent) while suppressing the noise.
+
+![Average Velocity Weighted](https://github.com/LinukPerera/Neural-Network-Driven-Augmented-Reality-for-Gesture-Control/blob/main/Project-Results/Average%20Velocity%20Weighted.png)
 
 ### Phase I Results
 The initial models demonstrated significant success in isolating intent:
